@@ -1,0 +1,68 @@
+name: Deploy
+
+# 手動実行のみ。push では起動しない
+on:
+  workflow_dispatch: {}
+
+# 同時に複数のデプロイが走らないようにする
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+# aws-actions/configure-aws-credentials で OIDC を使うために必要
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリのコードを取得
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Node.js のセットアップ(npm キャッシュ有効)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # 依存パッケージのインストール
+      - name: Install dependencies
+        run: npm ci
+
+      # TODO: デプロイ前にテストを実行する場合はここに追加する
+      # - name: Run tests
+      #   run: npx nx run-many --target test --all
+
+      # OIDC 経由で GitHub Actions Roleを引き受ける
+      # role-skip-session-tagging: 信頼ポリシーが sts:TagSession を許可していないため、
+      # デフォルトのセッションタグ付けを無効化する
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          role-skip-session-tagging: true
+
+      # TODO: 変更セットの内容を確認したい場合は、deploy の前に diff を出力し
+      #   GitHub Environments の Required reviewers 機能で承認ゲートを挟む
+      #   (CodePipeline の Manual Approval に相当)
+      # - name: Show change set (cdk diff)
+      #   run: npx nx run infra:cdk -- diff "nx-sample-infra-sandbox/**"
+      #   env:
+      #     CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+      #     CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      #
+      # deploy ジョブ自体に environment: production などを指定すると
+      # ここで承認待ちになる
+
+      # website のビルド + infra のコンパイル + cdk deploy まで一括実行
+      # main.ts の nx-sample-infra-sandbox Stage を対象に指定するターゲットを使う
+      - name: Deploy CDK stack
+        run: npx nx run infra:deploy-sandbox
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}

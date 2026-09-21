@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": [
+      "es2022"
+    ],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2022",
+    "customConditions": [
+      "@nx-sample/source"
+    ],
+    "rootDir": ".",
+    "paths": {
+      "@nx-sample/infra": [
+        "./packages/infra/src/index.ts"
+      ],
+      "@nx-sample/common-constructs": [
+        "./packages/common/constructs/src/index.ts"
+      ],
+      "@nx-sample/website": [
+        "./packages/website/src/index.ts"
+      ],
+      "@nx-sample/common-shadcn": [
+        "./packages/common/shadcn/src/index.ts"
+      ]
+    }
+  }
+}

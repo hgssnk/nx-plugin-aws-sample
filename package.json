@@ -1,0 +1,65 @@
+{
+  "name": "@nx-sample/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nx run-many --target dev",
+    "build": "nx run-many --target build",
+    "lint": "nx run-many --target lint --configuration=fix",
+    "test": "nx run-many --target test --all",
+    "trivy": "nx run-many --target trivy --all",
+    "build:skip-lint": "nx run-many --target build --configuration=skip-lint",
+    "build:all": "nx run-many --target build --all",
+    "affected:all": "nx affected --target build",
+    "prepare": "husky"
+  },
+  "private": true,
+  "dependencies": {
+    "@aws/nx-plugin": "1.0.2"
+  },
+  "devDependencies": {
+    "@aws/nx-plugin-mcp": "^1.0.2",
+    "@biomejs/biome": "2.5.12",
+    "@nx/js": "23.2.1",
+    "@nx/react": "23.2.1",
+    "@nx/vite": "23.2.1",
+    "@nx/vitest": "23.2.1",
+    "@nx/web": "23.2.1",
+    "@nx/workspace": "23.2.1",
+    "@swc/helpers": "~0.5.18",
+    "@tailwindcss/vite": "4.3.3",
+    "@tanstack/router-generator": "1.167.33",
+    "@tanstack/router-plugin": "1.168.35",
+    "@tanstack/router-utils": "1.162.2",
+    "@tanstack/virtual-file-routes": "1.162.0",
+    "@testing-library/dom": "10.4.0",
+    "@testing-library/react": "16.3.0",
+    "@types/node": "26.4.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/ui": "4.1.11",
+    "aws-cdk": "2.1139.0",
+    "esbuild": "0.28.2",
+    "husky": "9.1.7",
+    "jiti": "2.4.2",
+    "jsdom": "29.1.1",
+    "nx": "23.2.1",
+    "tslib": "^2.3.0",
+    "tsx": "4.23.13",
+    "typescript": "~6.0.3",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  },
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "packages/common/*"
+  ],
+  "overrides": {
+    "@nx/react": {
+      "express": "5.2.1"
+    }
+  }
+}
